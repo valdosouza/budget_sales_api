@@ -1,0 +1,32 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente (nunca commitar o .env real)
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build / dist
+dist/
+build/
+
+# Cobertura de testes
+coverage/
+
+# Claude Code
+.claude/
