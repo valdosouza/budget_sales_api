@@ -4,28 +4,34 @@ const repo = require('../infrastructure/auth.repository');
 
 class AuthService {
   /**
-   * Autentica um usuário comparando login e senha com TB_USUARIO.
+   * Autentica um usuario comparando login e senha com TB_USUARIO.
+   * Valida tambem se o usuario possui vinculo com TB_COLABORADOR (e vendedor).
    *
-   * @param {string} login  - Login do usuário (USU_LOGIN)
-   * @param {string} senha  - Senha em texto puro (USU_SENHA)
-   * @returns {{ authenticated: boolean, user?: object }}
+   * Possiveis retornos:
+   *   { authenticated: false, reason: 'invalid_credentials' }
+   *   { authenticated: false, reason: 'not_salesman' }
+   *   { authenticated: true,  user: { ... } }
    */
   async authenticate(login, senha) {
     if (!login || !senha) {
-      return { authenticated: false };
+      return { authenticated: false, reason: 'invalid_credentials' };
     }
 
     const result = await repo.findByLogin(login);
 
     if (!result) {
-      return { authenticated: false };
+      return { authenticated: false, reason: 'invalid_credentials' };
     }
 
-    // Comparação simples conforme regra de negócio descrita no contexto
-    const match = result.senha === senha;
+    // Comparacao simples conforme regra de negocio
+    if (result.senha !== senha) {
+      return { authenticated: false, reason: 'invalid_credentials' };
+    }
 
-    if (!match) {
-      return { authenticated: false };
+    // Valida vinculo com colaborador — usuario precisa ser vendedor
+    const salesmanId = result.user.salesmanId;
+    if (!salesmanId || salesmanId === 0) {
+      return { authenticated: false, reason: 'not_salesman' };
     }
 
     return {

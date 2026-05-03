@@ -15,4 +15,10 @@ async function getProduct(req, res, next) {
   } catch (err) { next(err); }
 }
 
-module.exports = { listProducts, getProduct };
+async function getProductByCodeBar(req, res, next) {
+  try {
+    res.json(await productService.getProductByCodeBar(req.params.codeBar));
+  } catch (err) { next(err); }
+}
+
+module.exports = { listProducts, getProduct, getProductByCodeBar };

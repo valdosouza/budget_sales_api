@@ -80,8 +80,9 @@ app.use('/api/v1/salesmen',       require('./src/salesman/salesman.routes'));
 app.use('/api/v1/price-lists',    require('./src/price_list/price_list.routes'));
 app.use('/api/v1/prices',         require('./src/price/price.routes'));
 app.use('/api/v1/stock-lists',    require('./src/stock_list/stock_list.routes'));
-app.use('/api/v1/stock',          require('./src/stock_balance/stock_balance.routes'));
+app.use('/api/v1/stock-balance',  require('./src/stock_balance/stock_balance.routes'));
 app.use('/api/v1/payment-types',  require('./src/payment_type/payment_type.routes'));
+app.use('/api/v1/product-images', require('./src/product_image/product_image.routes'));
 
 // ----------------------------------------------------------------
 // Handler 404
@@ -95,10 +96,14 @@ app.use((_req, res) => {
 // ----------------------------------------------------------------
 // eslint-disable-next-line no-unused-vars
 app.use((err, _req, res, _next) => {
-  console.error('[ERROR]', err);
-  res.status(err.status || 500).json({
-    error: env.isDev ? err.message : 'Erro interno no servidor.',
-    ...(env.isDev && { stack: err.stack }),
+  const status = err.status || 500;
+  if (status >= 500) {
+    console.error('[ERROR]', err);
+  }
+  const isServerError = status >= 500;
+  res.status(status).json({
+    error: (!isServerError || env.isDev) ? err.message : 'Erro interno no servidor.',
+    ...(env.isDev && isServerError && { stack: err.stack }),
   });
 });
 
@@ -125,5 +130,13 @@ async function shutdown(signal) {
 
 process.on('SIGTERM', () => shutdown('SIGTERM'));
 process.on('SIGINT',  () => shutdown('SIGINT'));
+
+process.on('uncaughtException', (err) => {
+  console.error('[FATAL] Uncaught exception — servidor mantido no ar:', err);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[FATAL] Unhandled rejection — servidor mantido no ar:', reason);
+});
 
 module.exports = app; // útil para testes

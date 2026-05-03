@@ -134,6 +134,14 @@ class ProductRepository {
     if (!rows.length) return null;
     return new Product(rows[0]);
   }
+
+  /** @returns {Promise<Product|null>} */
+  async findByCodeBar(codeBar) {
+    const sql = `${BASE_SELECT} WHERE UPPER(p.PRO_CODIGOBAR) = UPPER(?)`;
+    const rows = await query(sql, [String(codeBar)]);
+    if (!rows.length) return null;
+    return new Product(rows[0]);
+  }
 }
 
 module.exports = new ProductRepository();

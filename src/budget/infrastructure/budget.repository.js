@@ -124,19 +124,15 @@ class BudgetRepository {
 
   /**
    * Insere um novo orçamento.
-   * Obtém o próximo ID via generator GEN_CTC_CODIGO.
+   * GEN_ID é chamado fora da transação (conexão própria) para evitar
+   * crash interno do node-firebird ao executar GEN_ID dentro de trx.
    * @returns {Promise<Budget>}
    */
   async create(data) {
-    let newId;
+    const genRows = await query(`SELECT GEN_ID(GN_COTACAO, 1) AS NEW_ID FROM RDB$DATABASE`);
+    const newId = genRows[0].NEW_ID;
 
     await withTransaction(async (trx) => {
-      // Próximo ID via generator
-      const genRows = await queryInTransaction(
-        trx,
-        `SELECT GEN_ID(GEN_CTC_CODIGO, 1) AS NEW_ID FROM RDB$DATABASE`
-      );
-      newId = genRows[0].NEW_ID;
 
       await queryInTransaction(trx, `
         INSERT INTO TB_COTACAO (
@@ -156,7 +152,7 @@ class BudgetRepository {
         )
       `, [
         newId,
-        data.orderId         ?? 0,
+        0,
         data.number          ?? null,
         data.userId,
         data.date            ?? new Date(),

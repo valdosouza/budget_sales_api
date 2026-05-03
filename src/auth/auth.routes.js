@@ -8,14 +8,14 @@ const router = Router();
  * @swagger
  * tags:
  *   name: Auth
- *   description: Autenticação de usuários (TB_USUARIO)
+ *   description: Autenticacao de usuarios (TB_USUARIO)
  */
 
 /**
  * @swagger
  * /auth/login:
  *   post:
- *     summary: Autentica um usuário pelo login e senha
+ *     summary: Autentica um usuario pelo login e senha
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -25,19 +25,19 @@ const router = Router();
  *             $ref: '#/components/schemas/LoginInput'
  *     responses:
  *       200:
- *         description: Autenticação bem-sucedida
+ *         description: Autenticacao bem-sucedida
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/LoginSuccess'
  *       400:
- *         description: Campos obrigatórios ausentes
+ *         description: Campos obrigatorios ausentes
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
- *         description: Credenciais inválidas
+ *         description: Credenciais invalidas
  *         content:
  *           application/json:
  *             schema:
@@ -58,11 +58,11 @@ router.post('/login', ctrl.login);
  *         login:
  *           type: string
  *           example: "admin"
- *           description: Login do usuário (USU_LOGIN)
+ *           description: Login do usuario (USU_LOGIN)
  *         senha:
  *           type: string
  *           example: "minhasenha"
- *           description: Senha do usuário (USU_SENHA)
+ *           description: Senha do usuario (USU_SENHA)
  *     LoginSuccess:
  *       type: object
  *       properties:
@@ -79,13 +79,14 @@ router.post('/login', ctrl.login);
  *           example: false
  *         error:
  *           type: string
- *           example: "Credenciais inválidas."
+ *           example: "Credenciais invalidas."
  *     AuthUser:
  *       type: object
  *       properties:
  *         id:
  *           type: integer
  *           example: 1
+ *           description: Codigo do usuario (USU_CODIGO)
  *         name:
  *           type: string
  *           example: "Administrador"
@@ -98,12 +99,17 @@ router.post('/login', ctrl.login);
  *         active:
  *           type: string
  *           example: "S"
+ *         salesmanId:
+ *           type: integer
+ *           nullable: true
+ *           example: 10
+ *           description: Codigo do vendedor vinculado (CLB_CODIGO de TB_COLABORADOR)
  *     ErrorResponse:
  *       type: object
  *       properties:
  *         error:
  *           type: string
- *           example: "Os campos \"login\" e \"senha\" são obrigatórios."
+ *           example: "Os campos login e senha sao obrigatorios."
  */
 
 module.exports = router;

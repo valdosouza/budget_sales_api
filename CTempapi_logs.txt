@@ -1,0 +1,27 @@
+[DB] Pool Firebird criado — host: 127.0.0.1:3050 | max: 10
+node:events:491
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3000
+    at Server.setupListenHandle [as _listen2] (node:net:1717:16)
+    at listenInCluster (node:net:1765:12)
+    at Server.listen (node:net:1853:7)
+    at Function.listen (D:\GestaoApps\BudgetSales\budget_sales_api\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (D:\GestaoApps\BudgetSales\budget_sales_api\server.js:109:20)
+    at Module._compile (node:internal/modules/cjs/loader:1218:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1272:10)
+    at Module.load (node:internal/modules/cjs/loader:1081:32)
+    at Module._load (node:internal/modules/cjs/loader:922:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:82:12)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1744:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 3000
+}
+
+Node.js v19.3.0

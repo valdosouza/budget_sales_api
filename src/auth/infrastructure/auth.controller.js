@@ -12,16 +12,21 @@ async function login(req, res, next) {
 
     if (!login || !senha) {
       return res.status(400).json({
-        error: 'Os campos "login" e "senha" são obrigatórios.',
+        authenticated: false,
+        error: 'Os campos login e senha sao obrigatorios.',
       });
     }
 
     const result = await svc.authenticate(login, senha);
 
     if (!result.authenticated) {
+      const message = result.reason === 'not_salesman'
+        ? 'Erro de autenticacao ou usuario nao e vendedor.'
+        : 'Credenciais invalidas.';
+
       return res.status(401).json({
         authenticated: false,
-        error: 'Credenciais inválidas.',
+        error: message,
       });
     }
 

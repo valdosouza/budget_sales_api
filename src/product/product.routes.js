@@ -59,6 +59,29 @@ router.get('/', ctrl.listProducts);
 
 /**
  * @swagger
+ * /products/codebar/{codeBar}:
+ *   get:
+ *     summary: Busca produto por código de barras (PRO_CODIGOBAR)
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: codeBar
+ *         required: true
+ *         schema: { type: string }
+ *         description: Código de barras do produto
+ *     responses:
+ *       200:
+ *         description: Produto encontrado
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Product' }
+ *       404:
+ *         description: Não encontrado
+ */
+router.get('/codebar/:codeBar', ctrl.getProductByCodeBar);
+
+/**
+ * @swagger
  * /products/{id}:
  *   get:
  *     summary: Busca produto por ID

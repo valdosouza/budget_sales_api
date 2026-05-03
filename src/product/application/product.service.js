@@ -30,4 +30,14 @@ async function getProductById(id) {
   return product.toJSON();
 }
 
-module.exports = { listProducts, getProductById };
+async function getProductByCodeBar(codeBar) {
+  const product = await productRepository.findByCodeBar(codeBar);
+  if (!product) {
+    const err = new Error(`Produto com código de barras "${codeBar}" não encontrado.`);
+    err.status = 404;
+    throw err;
+  }
+  return product.toJSON();
+}
+
+module.exports = { listProducts, getProductById, getProductByCodeBar };

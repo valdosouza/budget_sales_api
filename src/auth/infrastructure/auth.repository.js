@@ -5,15 +5,23 @@ const User      = require('../domain/user.entity');
 
 class AuthRepository {
   /**
-   * Busca um usuário ativo pelo login.
-   * Retorna null se não encontrado ou inativo.
+   * Busca usuario ativo pelo login.
+   * Faz JOIN com TB_COLABORADOR para trazer CLB_CODIGO (codigo do vendedor).
+   * Retorna null se nao encontrado ou inativo.
    */
   async findByLogin(login) {
     const rows = await query(
-      `SELECT USU_CODIGO, USU_NOME, USU_LOGIN, USU_SENHA, USU_LEVEL, USU_ATIVO
-         FROM TB_USUARIO
-        WHERE UPPER(USU_LOGIN) = UPPER(?)
-          AND USU_ATIVO = 'S'`,
+      `SELECT u.USU_CODIGO,
+              u.USU_NOME,
+              u.USU_LOGIN,
+              u.USU_SENHA,
+              u.USU_LEVEL,
+              u.USU_ATIVO,
+              c.CLB_CODIGO
+         FROM TB_USUARIO u
+         LEFT JOIN TB_COLABORADOR c ON c.CLB_CODUSU = u.USU_CODIGO
+        WHERE UPPER(u.USU_LOGIN) = UPPER(?)
+          AND u.USU_ATIVO = 'S'`,
       [login]
     );
 

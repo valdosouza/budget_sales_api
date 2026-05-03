@@ -63,6 +63,14 @@ class BudgetItemRepository {
   }
 
   /**
+   * Retorna o próximo ICT_CODIGO disponível (MAX + 1), dentro de uma transação.
+   */
+  async #nextCodigo(trx) {
+    const rows = await queryInTransaction(trx, `SELECT MAX(ICT_CODIGO) AS MAX_ID FROM TB_ITENS_CTC`);
+    return (Number(rows[0].MAX_ID) || 0) + 1;
+  }
+
+  /**
    * Insere um novo item de orçamento.
    * @returns {Promise<BudgetItem>}
    */
@@ -70,11 +78,7 @@ class BudgetItemRepository {
     let newId;
 
     await withTransaction(async (trx) => {
-      const genRows = await queryInTransaction(
-        trx,
-        `SELECT GEN_ID(GEN_ICT_CODIGO, 1) AS NEW_ID FROM RDB$DATABASE`
-      );
-      newId = genRows[0].NEW_ID;
+      newId = await this.#nextCodigo(trx);
 
       await queryInTransaction(trx, `
         INSERT INTO TB_ITENS_CTC (

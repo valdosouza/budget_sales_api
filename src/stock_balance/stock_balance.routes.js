@@ -8,14 +8,14 @@ const router = Router();
  * @swagger
  * tags:
  *   name: Stock Balance
- *   description: Saldo de estoque por produto/depósito (TB_ESTOQUE)
+ *   description: Saldo de estoque por produto/deposito (TB_ESTOQUE)
  */
 
 /**
  * @swagger
- * /stock:
+ * /stock-balance:
  *   get:
- *     summary: Lista saldos de estoque com paginação e filtros
+ *     summary: Lista saldos de estoque com paginacao e filtros
  *     tags: [Stock Balance]
  *     parameters:
  *       - in: query
@@ -27,7 +27,7 @@ const router = Router();
  *       - in: query
  *         name: stockListId
  *         schema: { type: integer }
- *         description: Filtrar por depósito/estoque
+ *         description: Filtrar por deposito/estoque
  *       - in: query
  *         name: productId
  *         schema: { type: integer }
@@ -49,9 +49,9 @@ router.get('/', ctrl.listStockBalances);
 
 /**
  * @swagger
- * /stock/product/{productId}:
+ * /stock-balance/product/{productId}:
  *   get:
- *     summary: Retorna saldo de um produto em todos os depósitos
+ *     summary: Retorna saldo de um produto em todos os depositos
  *     tags: [Stock Balance]
  *     parameters:
  *       - in: path
@@ -60,19 +60,18 @@ router.get('/', ctrl.listStockBalances);
  *         schema: { type: integer }
  *     responses:
  *       200:
- *         description: Lista de saldos por depósito
+ *         description: Lista de saldos por deposito
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items: { $ref: '#/components/schemas/StockBalance' }
  */
-// IMPORTANTE: /product/:productId deve vir ANTES de /:id para não ser capturado como ID
 router.get('/product/:productId', ctrl.getStockByProduct);
 
 /**
  * @swagger
- * /stock/{id}:
+ * /stock-balance/{id}:
  *   get:
  *     summary: Busca saldo de estoque por ID
  *     tags: [Stock Balance]
@@ -88,7 +87,7 @@ router.get('/product/:productId', ctrl.getStockByProduct);
  *           application/json:
  *             schema: { $ref: '#/components/schemas/StockBalance' }
  *       404:
- *         description: Não encontrado
+ *         description: Nao encontrado
  */
 router.get('/:id', ctrl.getStockBalance);
 
