@@ -66,7 +66,7 @@ class BudgetItemRepository {
    * Retorna o próximo ICT_CODIGO disponível (MAX + 1), dentro de uma transação.
    */
   async #nextCodigo(trx) {
-    const rows = await queryInTransaction(trx, `SELECT MAX(ICT_CODIGO) AS MAX_ID FROM TB_ITENS_CTC`);
+    const rows = await queryInTransaction(trx, 'SELECT MAX(ICT_CODIGO) AS MAX_ID FROM TB_ITENS_CTC');
     return (Number(rows[0].MAX_ID) || 0) + 1;
   }
 
@@ -157,7 +157,7 @@ class BudgetItemRepository {
    * @returns {Promise<void>}
    */
   async delete(id) {
-    await query(`DELETE FROM TB_ITENS_CTC WHERE ICT_CODIGO = ?`, [Number(id)]);
+    await query('DELETE FROM TB_ITENS_CTC WHERE ICT_CODIGO = ?', [Number(id)]);
   }
 
   /**
@@ -165,7 +165,7 @@ class BudgetItemRepository {
    * @returns {Promise<void>}
    */
   async deleteByBudgetId(budgetId) {
-    await query(`DELETE FROM TB_ITENS_CTC WHERE ICT_CODCTC = ?`, [Number(budgetId)]);
+    await query('DELETE FROM TB_ITENS_CTC WHERE ICT_CODCTC = ?', [Number(budgetId)]);
   }
 }
 

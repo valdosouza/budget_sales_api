@@ -51,13 +51,17 @@ const router = Router();
  *         schema: { type: integer }
  *         description: Filtro por vendedor (CTC_CODVDO)
  *       - in: query
+ *         name: institutionId
+ *         schema: { type: integer }
+ *         description: Filtro por instituição (CTC_CODMHA)
+ *       - in: query
  *         name: dateFrom
- *         schema: { type: string, format: date }
- *         description: Data inicial (YYYY-MM-DD)
+ *         schema: { type: string, format: date, example: "2024-03-07" }
+ *         description: Data inicial
  *       - in: query
  *         name: dateTo
- *         schema: { type: string, format: date }
- *         description: Data final (YYYY-MM-DD)
+ *         schema: { type: string, format: date, example: "2024-12-31" }
+ *         description: Data final
  *     responses:
  *       200:
  *         description: Lista paginada de orçamentos
@@ -331,7 +335,7 @@ router.delete('/:id/items/:itemId', budgetItemCtrl.deleteItem);
  *         validity:         { type: string,  example: "30 dias", nullable: true }
  *         deliveryTime:     { type: string,  example: "5 dias úteis", nullable: true }
  *         salesmanId:       { type: integer, example: 7, nullable: true }
- *         warehouseId:      { type: integer, example: 1, nullable: true }
+ *         institutionId:    { type: integer, example: 1, nullable: true }
  *         status:           { type: string,  example: "A" }
  *
  *     BudgetInput:
@@ -341,7 +345,7 @@ router.delete('/:id/items/:itemId', budgetItemCtrl.deleteItem);
  *         orderId:          { type: integer }
  *         number:           { type: string }
  *         userId:           { type: integer }
- *         date:             { type: string, format: date }
+ *         date:             { type: string, example: "31/12/2024", description: "Formato DD/MM/YYYY" }
  *         customerId:       { type: integer, nullable: true }
  *         customerName:     { type: string,  nullable: true }
  *         paymentTypeId:    { type: integer, nullable: true }
@@ -356,7 +360,7 @@ router.delete('/:id/items/:itemId', budgetItemCtrl.deleteItem);
  *         validity:         { type: string,  nullable: true }
  *         deliveryTime:     { type: string,  nullable: true }
  *         salesmanId:       { type: integer, nullable: true }
- *         warehouseId:      { type: integer, nullable: true }
+ *         institutionId:    { type: integer, nullable: true }
  *         status:           { type: string,  default: "A" }
  *
  *     BudgetItem:

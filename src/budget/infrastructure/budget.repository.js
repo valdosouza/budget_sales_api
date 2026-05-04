@@ -8,16 +8,19 @@ class BudgetRepository {
    * Lista orçamentos com paginação e filtros opcionais.
    *
    * Filtros suportados:
-   *   status    {string}  — filtra por CTC_STATUS
-   *   userId    {number}  — filtra por CTC_CODUSU
-   *   customerId {number} — filtra por CTC_CODEMP
-   *   salesmanId {number} — filtra por CTC_CODVDO
-   *   dateFrom  {string}  — data inicial (YYYY-MM-DD)
-   *   dateTo    {string}  — data final   (YYYY-MM-DD)
+   *   status       {string}  — filtra por CTC_STATUS
+   *   userId       {number}  — filtra por CTC_CODUSU
+   *   customerId   {number}  — filtra por CTC_CODEMP
+   *   salesmanId   {number}  — filtra por CTC_CODVDO
+   *   institutionId {number} — filtra por CTC_CODMHA
+   *   dateFrom     {string}  — data inicial (YYYY-MM-DD)
+   *   dateTo       {string}  — data final   (YYYY-MM-DD)
    */
   async findAll({ limit = 20, offset = 0, filters = {} } = {}) {
     const conditions = [];
     const params     = [];
+
+    conditions.push('c.CTC_CODPED = 0');
 
     if (filters.status) {
       conditions.push('c.CTC_STATUS = ?');
@@ -34,6 +37,10 @@ class BudgetRepository {
     if (filters.salesmanId) {
       conditions.push('c.CTC_CODVDO = ?');
       params.push(Number(filters.salesmanId));
+    }
+    if (filters.institutionId) {
+      conditions.push('c.CTC_CODMHA = ?');
+      params.push(Number(filters.institutionId));
     }
     if (filters.dateFrom) {
       conditions.push('c.CTC_DATA >= ?');
@@ -79,7 +86,7 @@ class BudgetRepository {
       ${where}
       ORDER BY c.CTC_CODIGO DESC
     `;
-
+    console.log('Executing SQL:', dataSql, 'with params:', [Number(limit), Number(offset), ...params]);
     const rows = await query(dataSql, [Number(limit), Number(offset), ...params]);
     const data = rows.map((row) => new Budget(row));
 
@@ -129,7 +136,7 @@ class BudgetRepository {
    * @returns {Promise<Budget>}
    */
   async create(data) {
-    const genRows = await query(`SELECT GEN_ID(GN_COTACAO, 1) AS NEW_ID FROM RDB$DATABASE`);
+    const genRows = await query('SELECT GEN_ID(GN_COTACAO, 1) AS NEW_ID FROM RDB$DATABASE');
     const newId = genRows[0].NEW_ID;
 
     await withTransaction(async (trx) => {
@@ -141,21 +148,21 @@ class BudgetRepository {
           CTC_QT_PRODUTO, CTC_VL_PRODUTO, CTC_VL_FRETE,
           CTC_ALIQ_DESCONTO, CTC_VL_DESCONTO, CTC_VL_COTACAO,
           CTC_CONTATO, CTC_VALIDADE, CTC_PRZ_ENTREGA,
-          CTC_CODVDO, CTC_CODMHA, CTC_STATUS
+          CTC_CODVDO, CTC_CODMHA, CTC_STATUS,CTC_APROVADO
         ) VALUES (
           ?, ?, ?, ?, ?,
           ?, ?, ?, ?,
           ?, ?, ?,
           ?, ?, ?,
           ?, ?, ?,
-          ?, ?, ?
+          ?, ?, ? ,?
         )
       `, [
         newId,
         0,
         data.number          ?? null,
         data.userId,
-        data.date            ?? new Date(),
+        data.date,
         data.customerId      ?? null,
         data.customerName    ?? null,
         data.paymentTypeId   ?? null,
@@ -170,8 +177,9 @@ class BudgetRepository {
         data.validity         ?? null,
         data.deliveryTime     ?? null,
         data.salesmanId       ?? null,
-        data.warehouseId      ?? null,
+        data.institutionId    ?? null,
         data.status           ?? 'A',
+        data.approved         ?? 'N',
       ]);
     });
 
@@ -205,7 +213,7 @@ class BudgetRepository {
       validity:         'CTC_VALIDADE',
       deliveryTime:     'CTC_PRZ_ENTREGA',
       salesmanId:       'CTC_CODVDO',
-      warehouseId:      'CTC_CODMHA',
+      institutionId:    'CTC_CODMHA',
       status:           'CTC_STATUS',
     };
 

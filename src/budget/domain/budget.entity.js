@@ -49,7 +49,7 @@ class Budget {
     this.validity        = CTC_VALIDADE   ? CTC_VALIDADE.trim()    : null;
     this.deliveryTime    = CTC_PRZ_ENTREGA ? CTC_PRZ_ENTREGA.trim() : null;
     this.salesmanId      = CTC_CODVDO  ?? null;
-    this.warehouseId     = CTC_CODMHA  ?? null;
+    this.institutionId   = CTC_CODMHA  ?? null;
     this.status          = CTC_STATUS  ? CTC_STATUS.trim()         : null;
   }
 
@@ -77,7 +77,7 @@ class Budget {
       validity:         this.validity,
       deliveryTime:     this.deliveryTime,
       salesmanId:       this.salesmanId,
-      warehouseId:      this.warehouseId,
+      institutionId:    this.institutionId,
       status:           this.status,
     };
   }

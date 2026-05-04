@@ -19,6 +19,27 @@ function badRequest(msg) {
 }
 
 // -------------------------------------------------------------------
+// Helpers de data
+// -------------------------------------------------------------------
+function parseDate(dateStr) {
+  if (!dateStr) return null;
+
+  // Se já está em formato YYYY-MM-DD, retorna como está
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return dateStr;
+  }
+
+  // Tenta converter DD/MM/YYYY para YYYY-MM-DD
+  const match = dateStr.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!match) {
+    throw badRequest('Formato de data inválido. Use DD/MM/YYYY (ex: 31/12/2024)');
+  }
+
+  const [, day, month, year] = match;
+  return `${year}-${month}-${day}`;
+}
+
+// -------------------------------------------------------------------
 // Budget
 // -------------------------------------------------------------------
 
@@ -56,13 +77,18 @@ async function getBudgetById(id) {
 
 /**
  * Cria um novo orçamento.
- * Campos obrigatórios: userId, date
+ * Campos obrigatórios: userId, date (formato: DD/MM/YYYY)
  */
 async function createBudget(data) {
   if (!data.userId) throw badRequest('Campo obrigatório ausente: userId.');
   if (!data.date)   throw badRequest('Campo obrigatório ausente: date.');
 
-  const budget = await budgetRepository.create(data);
+  const convertedData = {
+    ...data,
+    date: parseDate(data.date)
+  };
+
+  const budget = await budgetRepository.create(convertedData);
   return budget.toJSON();
 }
 
@@ -73,7 +99,12 @@ async function updateBudget(id, data) {
   const existing = await budgetRepository.findById(id);
   if (!existing) throw notFound(`Orçamento #${id} não encontrado.`);
 
-  const updated = await budgetRepository.update(id, data);
+  const convertedData = { ...data };
+  if (convertedData.date) {
+    convertedData.date = parseDate(convertedData.date);
+  }
+
+  const updated = await budgetRepository.update(id, convertedData);
   return updated.toJSON();
 }
 
