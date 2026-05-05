@@ -2,6 +2,8 @@
 
 require('dotenv').config();
 
+const fs         = require('fs');
+const https      = require('https');
 const express    = require('express');
 const cors       = require('cors');
 const swaggerUi  = require('swagger-ui-express');
@@ -20,7 +22,24 @@ initPool();
 // ----------------------------------------------------------------
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
+  allowedHeaders: ['*'],
+  credentials: false,
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+  res.header('Access-Control-Allow-Headers', '*');
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -108,12 +127,18 @@ app.use((err, _req, res, _next) => {
 });
 
 // ----------------------------------------------------------------
-// Start
+// Start HTTPS
 // ----------------------------------------------------------------
-const server = app.listen(env.PORT, () => {
-  console.log(`[APP] budget-sales-api rodando em http://localhost:${env.PORT}`);
-  console.log(`[APP] Documentação Swagger: http://localhost:${env.PORT}/api-docs`);
+const httpsOptions = {
+  key: fs.readFileSync('./certs/server.key', 'utf8'),
+  cert: fs.readFileSync('./certs/server.crt', 'utf8'),
+};
+
+const server = https.createServer(httpsOptions, app).listen(env.PORT, '0.0.0.0', () => {
+  console.log(`[APP] budget-sales-api rodando em https://0.0.0.0:${env.PORT}`);
+  console.log(`[APP] Documentação Swagger: https://localhost:${env.PORT}/api-docs`);
   console.log(`[APP] Ambiente: ${env.NODE_ENV}`);
+  console.log(`[APP] ⚠️  Use https://192.168.0.116:${env.PORT} de outro computador`);
 });
 
 // ----------------------------------------------------------------

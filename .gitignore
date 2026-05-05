@@ -30,3 +30,9 @@ coverage/
 
 # Claude Code
 .claude/
+
+# Certificados SSL (self-signed para desenvolvimento)
+certs/
+*.key
+*.crt
+*.pfx
