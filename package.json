@@ -1,7 +1,7 @@
 {
-  "name": "budget-sales-api",
+  "name": "local-gestao-api",
   "version": "1.0.0",
-  "description": "API REST para gestão de orçamentos e vendas — Firebird 2.5",
+  "description": "API REST para sistema de gestão ERP em rede local — Firebird 2.5",
   "main": "server.js",
   "engines": {
     "node": ">=20.0.0"

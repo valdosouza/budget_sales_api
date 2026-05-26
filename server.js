@@ -31,9 +31,9 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Budget Sales API',
+      title: 'Local Gestão API',
       version: '1.0.0',
-      description: 'API REST para gestão de orçamentos e vendas — Firebird 2.5',
+      description: 'API REST para sistema de gestão ERP em rede local — Firebird 2.5',
     },
     servers: [
       {
@@ -57,7 +57,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // ----------------------------------------------------------------
 app.get('/', (_req, res) => {
   res.json({
-    message: 'Bem-vindo à Budget Sales API',
+    message: 'Bem-vindo à Local Gestão API',
     docs: '/api-docs',
     health: '/api/v1/health',
   });
@@ -83,6 +83,8 @@ app.use('/api/v1/stock-lists',    require('./src/stock_list/stock_list.routes'))
 app.use('/api/v1/stock-balance',  require('./src/stock_balance/stock_balance.routes'));
 app.use('/api/v1/payment-types',  require('./src/payment_type/payment_type.routes'));
 app.use('/api/v1/product-images', require('./src/product_image/product_image.routes'));
+app.use('/api/v1/stock-control',  require('./src/stock_control/stock_control.routes'));
+app.use('/api/v1/permission',     require('./src/permission/permission.routes'));
 
 // ----------------------------------------------------------------
 // Handler 404
@@ -112,7 +114,7 @@ app.use((err, _req, res, _next) => {
 // ----------------------------------------------------------------
 
 const server = app.listen(env.PORT, () => {
-  console.log(`[APP] budget-sales-api rodando em http://localhost:${env.PORT}`);
+  console.log(`[APP] local-gestao-api rodando em http://localhost:${env.PORT}`);
   console.log(`[APP] Documentação Swagger: http://localhost:${env.PORT}/api-docs`);
   console.log(`[APP] Ambiente: ${env.NODE_ENV}`);
 });
