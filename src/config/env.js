@@ -35,6 +35,10 @@ const env = {
   isDev: optional('NODE_ENV', 'development') === 'development',
   isProd: optional('NODE_ENV', 'development') === 'production',
 
+  // --- JWT ---
+  jwtSecret: required('JWT_SECRET'),
+  jwtExpiresIn: optional('JWT_EXPIRES_IN', '8h'),
+
   // --- Firebird ---
   firebird: {
     host:     required('FB_HOST'),

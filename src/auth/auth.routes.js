@@ -17,6 +17,7 @@ const router = Router();
  *   post:
  *     summary: Autentica um usuario pelo login e senha
  *     tags: [Auth]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -69,6 +70,10 @@ router.post('/login', ctrl.login);
  *         authenticated:
  *           type: boolean
  *           example: true
+ *         token:
+ *           type: string
+ *           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *           description: Token JWT — use no header Authorization Bearer {token}
  *         user:
  *           $ref: '#/components/schemas/AuthUser'
  *     LoginFailure:

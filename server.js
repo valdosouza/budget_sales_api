@@ -10,6 +10,7 @@ const swaggerJsdoc = require('swagger-jsdoc');
 
 const env      = require('./src/config/env');
 const { initPool, destroyPool } = require('./src/config/database');
+const { authenticateToken } = require('./src/auth/infrastructure/jwt.middleware');
 
 // ----------------------------------------------------------------
 // Inicializa pool Firebird antes de subir o servidor
@@ -43,7 +44,16 @@ const swaggerOptions = {
     ],
     components: {
       schemas: {},
+      securitySchemes: {
+        BearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Informe o token JWT obtido em POST /auth/login. Formato: Bearer {token}',
+        },
+      },
     },
+    security: [{ BearerAuth: [] }],
   },
   // Arquivos que contêm anotações JSDoc com @swagger
   apis: ['./src/**/**.routes.js', './src/**/*.controller.js'],
@@ -71,8 +81,12 @@ app.get('/api/v1/health', (_req, res) => {
   });
 });
 
-// Módulos de rotas
+// Módulos de rotas — login público
 app.use('/api/v1/auth',           require('./src/auth/auth.routes'));
+
+// Todas as rotas abaixo exigem JWT válido
+app.use(authenticateToken);
+
 app.use('/api/v1/budgets',        require('./src/budget/budget.routes'));
 app.use('/api/v1/products',       require('./src/product/product.routes'));
 app.use('/api/v1/customers',      require('./src/customer/customer.routes'));

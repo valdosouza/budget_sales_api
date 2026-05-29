@@ -32,6 +32,7 @@ async function login(req, res, next) {
 
     return res.status(200).json({
       authenticated: true,
+      token: result.token,
       user: result.user,
     });
   } catch (err) {
