@@ -56,7 +56,7 @@ const swaggerOptions = {
     security: [{ BearerAuth: [] }],
   },
   // Arquivos que contêm anotações JSDoc com @swagger
-  apis: ['./src/**/**.routes.js', './src/**/*.controller.js'],
+  apis: ['./src/**/**.routes.js', './src/**/*.controller.js', './server.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
@@ -73,16 +73,31 @@ app.get('/', (_req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Verifica se a API está rodando
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: API rodando corretamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 result:
+ *                   type: boolean
+ *                   example: true
+ */
 app.get('/api/v1/health', (_req, res) => {
-  res.json({
-    status: 'ok',
-    environment: env.NODE_ENV,
-    timestamp: new Date().toISOString(),
-  });
+  res.status(200).json({ result: true });
 });
 
 // Módulos de rotas — login público
 app.use('/api/v1/auth',           require('./src/auth/auth.routes'));
+app.use('/api/v1/institutions',   require('./src/institution/institution.routes'));
 
 // Todas as rotas abaixo exigem JWT válido
 app.use(authenticateToken);
