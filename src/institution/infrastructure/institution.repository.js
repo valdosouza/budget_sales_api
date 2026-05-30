@@ -11,14 +11,15 @@ const { query } = require('../../config/database');
 class InstitutionRepository extends IInstitutionRepository {
   /**
    * Lista todas as instituições ativas (EMP_TIPO = 0 E EMP_ATIVA = 'S')
-   * Retorna apenas EMP_CODIGO e EMP_FANTASIA
+   * Retorna apenas EMP_CODIGO, EMP_FANTASIA e EMP_CNPJ
    * @returns {Promise<Institution[]>}
    */
   async listSimple() {
     const sql = `
       SELECT
         EMP_CODIGO,
-        EMP_FANTASIA
+        EMP_FANTASIA,
+        EMP_CNPJ
       FROM TB_EMPRESA
       WHERE EMP_TIPO = 0
         AND EMP_ATIVA = 'S'
@@ -29,7 +30,8 @@ class InstitutionRepository extends IInstitutionRepository {
 
     return result.map(row => new Institution(
       row.EMP_CODIGO,
-      row.EMP_FANTASIA
+      row.EMP_FANTASIA,
+      row.EMP_CNPJ
     ));
   }
 }

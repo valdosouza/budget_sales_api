@@ -5,9 +5,10 @@
  * Representa um estabelecimento/empresa do sistema
  */
 class Institution {
-  constructor(id, fantasyName) {
+  constructor(id, fantasyName, cnpj) {
     this.id = id;                    // EMP_CODIGO
     this.fantasyName = fantasyName;  // EMP_FANTASIA
+    this.cnpj = cnpj;                // EMP_CNPJ
   }
 }
 
