@@ -1,6 +1,6 @@
 'use strict';
 
-const { query }      = require('../../config/database');
+const { query, queryReadOnly } = require('../../config/database');
 const StockBalance   = require('../domain/stock_balance.entity');
 
 const BASE_SELECT = `
@@ -66,6 +66,29 @@ class StockBalanceRepository {
       [Number(productId)]
     );
     return rows.map((r) => new StockBalance(r));
+  }
+
+  async findSynch(institutionId, lastSynch) {
+    const rows = await queryReadOnly(
+      `SELECT
+         D.EST_CODPRO,
+         D.EST_QTDE,
+         MAX(S.SRC_TIME) AS SRC_TIME
+       FROM TB_ESTOQUES M
+         INNER JOIN TB_ESTOQUE D ON M.ETS_CODIGO = D.EST_CODETS
+         INNER JOIN TB_SINCRONIA S ON S.SRC_REGISTRO = D.EST_CODIGO
+       WHERE S.SRC_TABELA = 'TB_ESTOQUE'
+         AND M.ETS_CODMHA = ?
+         AND S.SRC_TIME > ?
+       GROUP BY D.EST_CODPRO, D.EST_QTDE
+       ORDER BY 3 ASC`,
+      [Number(institutionId), lastSynch]
+    );
+    return rows.map((r) => ({
+      product:     r.EST_CODPRO,
+      quantity:    Number(r.EST_QTDE),
+      last_change: r.SRC_TIME,
+    }));
   }
 }
 

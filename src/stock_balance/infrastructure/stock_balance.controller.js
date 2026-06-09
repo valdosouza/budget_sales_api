@@ -21,4 +21,15 @@ async function getStockByProduct(req, res, next) {
   } catch (err) { next(err); }
 }
 
-module.exports = { listStockBalances, getStockBalance, getStockByProduct };
+async function syncStockBalance(req, res, next) {
+  try {
+    const { tb_instituion_id, last_synch } = req.query;
+    const result = await svc.syncStockBalance({ institutionId: tb_instituion_id, lastSynch: last_synch });
+    res.json(result);
+  } catch (err) {
+    console.error('[SYNCH] erro:', err.message, err.stack);
+    next(err);
+  }
+}
+
+module.exports = { listStockBalances, getStockBalance, getStockByProduct, syncStockBalance };

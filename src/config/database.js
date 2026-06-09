@@ -62,16 +62,66 @@ function getConnection() {
  * @param {Array}  params  - Parâmetros posicionais
  * @returns {Promise<Array>} Linhas retornadas (SELECT) ou metadados (INSERT/UPDATE/DELETE)
  */
+const QUERY_TIMEOUT_MS = 30_000;
+
+// READ COMMITTED + NO WAIT + READ ONLY — evita espera por locks em queries de leitura
+async function queryReadOnly(sql, params = []) {
+  const db = await getConnection();
+
+  return new Promise((resolve, reject) => {
+    let settled = false;
+
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      db.detach();
+      const err = new Error(`[DB] Query timeout após ${QUERY_TIMEOUT_MS}ms`);
+      err.status = 504;
+      reject(err);
+    }, QUERY_TIMEOUT_MS);
+
+    db.transaction(Firebird.ISOLATION_READ_COMMITTED_READ_ONLY, (txErr, transaction) => {
+      if (txErr) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        db.detach();
+        return reject(txErr);
+      }
+
+      transaction.query(sql, params, (err, result) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        transaction.rollback(() => db.detach());
+        if (err) return reject(err);
+        resolve(result ?? []);
+      });
+    });
+  });
+}
+
 async function query(sql, params = []) {
   const db = await getConnection();
 
   return new Promise((resolve, reject) => {
+    let settled = false;
+
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      db.detach();
+      const err = new Error(`[DB] Query timeout após ${QUERY_TIMEOUT_MS}ms`);
+      err.status = 504;
+      reject(err);
+    }, QUERY_TIMEOUT_MS);
+
     db.query(sql, params, (err, result) => {
-      db.detach(); // devolve a conexão ao pool
-
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      db.detach();
       if (err) return reject(err);
-
-      // node-firebird retorna arrays para SELECT e objetos de metadados para DML
       resolve(result ?? []);
     });
   });
@@ -148,6 +198,7 @@ module.exports = {
   initPool,
   getConnection,
   query,
+  queryReadOnly,
   withTransaction,
   queryInTransaction,
   destroyPool,

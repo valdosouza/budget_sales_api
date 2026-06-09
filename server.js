@@ -25,6 +25,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use((req, _res, next) => {
+  console.log(`[REQ] ${new Date().toISOString()} ${req.method} ${req.originalUrl}`);
+  next();
+});
 // ----------------------------------------------------------------
 // Swagger / OpenAPI 3.0
 // ----------------------------------------------------------------

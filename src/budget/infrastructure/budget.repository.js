@@ -86,7 +86,6 @@ class BudgetRepository {
       ${where}
       ORDER BY c.CTC_CODIGO DESC
     `;
-    console.log('Executing SQL:', dataSql, 'with params:', [Number(limit), Number(offset), ...params]);
     const rows = await query(dataSql, [Number(limit), Number(offset), ...params]);
     const data = rows.map((row) => new Budget(row));
 
