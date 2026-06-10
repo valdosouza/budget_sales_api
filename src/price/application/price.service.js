@@ -1,6 +1,7 @@
 'use strict';
 
 const repo = require('../infrastructure/price.repository');
+const { parseLastSynch } = require('../../shared/synch.utils');
 
 function notFound(id) {
   const err = new Error(`Preço #${id} não encontrado.`);
@@ -26,4 +27,15 @@ async function getPricesByProduct(productId) {
   return items.map((p) => p.toJSON());
 }
 
-module.exports = { listPrices, getPriceById, getPricesByProduct };
+async function syncPrices({ institutionId, lastSynch }) {
+  if (!institutionId) {
+    const err = new Error('Parâmetro tb_instituion_id é obrigatório.');
+    err.status = 400;
+    throw err;
+  }
+  const date  = parseLastSynch(lastSynch);
+  const items = await repo.findSynch(institutionId, date);
+  return { data: items, meta: { tb_instituion_id: Number(institutionId), last_synch: lastSynch } };
+}
+
+module.exports = { listPrices, getPriceById, getPricesByProduct, syncPrices };

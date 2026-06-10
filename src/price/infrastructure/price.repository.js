@@ -1,6 +1,6 @@
 'use strict';
 
-const { query } = require('../../config/database');
+const { query, queryReadOnly } = require('../../config/database');
 const Price     = require('../domain/price.entity');
 
 const BASE_SELECT = `
@@ -66,6 +66,29 @@ class PriceRepository {
       [Number(productId)]
     );
     return rows.map((r) => new Price(r));
+  }
+
+  async findSynch(institutionId, lastSynch) {
+    const rows = await queryReadOnly(
+      `SELECT
+         D.PRC_CODPRO,
+         D.PRC_VL_VDA,
+         MAX(S.SRC_TIME) AS SRC_TIME
+       FROM TB_TABELA_PRECO M
+         INNER JOIN TB_PRECO D ON M.TPR_CODIGO = D.PRC_CODTPR
+         INNER JOIN TB_SINCRONIA S ON S.SRC_REGISTRO = D.PRC_CODIGO
+       WHERE S.SRC_TABELA = 'TB_PRECO'
+         AND M.TPR_CODEMP = ?
+         AND S.SRC_TIME > ?
+       GROUP BY D.PRC_CODPRO, D.PRC_VL_VDA
+       ORDER BY 3 ASC`,
+      [Number(institutionId), lastSynch]
+    );
+    return rows.map((r) => ({
+      product:     r.PRC_CODPRO,
+      price_tag:   Number(r.PRC_VL_VDA),
+      last_change: r.SRC_TIME,
+    }));
   }
 }
 

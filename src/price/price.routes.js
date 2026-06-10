@@ -67,6 +67,50 @@ router.get('/', ctrl.listPrices);
  *               type: array
  *               items: { $ref: '#/components/schemas/Price' }
  */
+/**
+ * @swagger
+ * /prices/synch:
+ *   get:
+ *     summary: Retorna preços alterados desde a ultima sincronizacao
+ *     tags: [Prices]
+ *     parameters:
+ *       - in: query
+ *         name: tb_instituion_id
+ *         required: true
+ *         schema: { type: integer }
+ *         example: 27
+ *       - in: query
+ *         name: last_synch
+ *         required: true
+ *         schema: { type: string }
+ *         example: "09/06/2026 17:00:35"
+ *         description: Data/hora da ultima sincronizacao (DD/MM/YYYY HH:mm:ss)
+ *     responses:
+ *       200:
+ *         description: Lista de produtos com preco alterado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       product:     { type: integer, example: 200 }
+ *                       price_tag:   { type: number,  example: 99.90 }
+ *                       last_change: { type: string,  format: date-time }
+ *                 meta:
+ *                   type: object
+ *                   properties:
+ *                     tb_instituion_id: { type: integer, example: 27 }
+ *                     last_synch:       { type: string,  example: "09/06/2026 17:00:35" }
+ *       400:
+ *         description: Parametros invalidos
+ */
+router.get('/synch', ctrl.syncPrices);
+
 // IMPORTANTE: /product/:productId deve vir ANTES de /:id para não ser capturado como ID
 router.get('/product/:productId', ctrl.getPricesByProduct);
 

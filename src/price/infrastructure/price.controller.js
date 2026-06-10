@@ -21,4 +21,11 @@ async function getPricesByProduct(req, res, next) {
   } catch (err) { next(err); }
 }
 
-module.exports = { listPrices, getPrice, getPricesByProduct };
+async function syncPrices(req, res, next) {
+  try {
+    const { tb_instituion_id, last_synch } = req.query;
+    res.json(await svc.syncPrices({ institutionId: tb_instituion_id, lastSynch: last_synch }));
+  } catch (err) { next(err); }
+}
+
+module.exports = { listPrices, getPrice, getPricesByProduct, syncPrices };
