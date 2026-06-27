@@ -1,0 +1,83 @@
+'use strict';
+
+const orderSaleService = require('../application/order_sale.service');
+const { validateOrderPayload } = require('./order_sale.validator');
+
+/**
+ * GET /api/v1/order-sales
+ */
+async function listOrders(req, res, next) {
+  try {
+    const { limit = 20, offset = 0, ...filters } = req.query;
+    const result = await orderSaleService.listOrders({
+      limit:   Number(limit),
+      offset:  Number(offset),
+      filters,
+    });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * GET /api/v1/order-sales/:id
+ */
+async function getOrder(req, res, next) {
+  try {
+    const order = await orderSaleService.getOrderById(req.params.id);
+    res.json(order);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * GET /api/v1/order-sales/:id/items
+ */
+async function listOrderItems(req, res, next) {
+  try {
+    const items = await orderSaleService.listOrderItems(req.params.id);
+    res.json(items);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /api/v1/order-sales
+ * Valida o payload antes de criar o pedido de venda completo.
+ */
+async function createOrder(req, res, next) {
+  try {
+    // Executa validações
+    const validation = await validateOrderPayload(req.body);
+    if (!validation.valid) {
+      return res.status(400).json({
+        error: 'Validação do payload falhou',
+        details: validation.errors,
+      });
+    }
+
+    // Se passou nas validações, cria o pedido
+    const result = await orderSaleService.createOrder(req.body);
+    res.status(201).json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * PUT /api/v1/order-sales/:id
+ * Atualiza o cabeçalho de um pedido de venda.
+ */
+async function updateOrder(req, res, next) {
+  try {
+    const order = await orderSaleService.updateOrder(req.params.id, req.body);
+    res.json(order);
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { listOrders, getOrder, listOrderItems, createOrder, updateOrder };

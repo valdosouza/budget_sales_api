@@ -118,6 +118,7 @@ app.use('/api/v1/stock-balance',  require('./src/stock_balance/stock_balance.rou
 app.use('/api/v1/payment-types',  require('./src/payment_type/payment_type.routes'));
 app.use('/api/v1/product-images', require('./src/product_image/product_image.routes'));
 app.use('/api/v1/stock-control',  require('./src/stock_control/stock_control.routes'));
+app.use('/api/v1/order-sales',    require('./src/order_sale/order_sale.routes'));
 app.use('/api/v1/permission',     require('./src/permission/permission.routes'));
 
 // ----------------------------------------------------------------
