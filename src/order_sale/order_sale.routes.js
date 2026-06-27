@@ -188,36 +188,6 @@ router.get('/:id/items', orderSaleCtrl.listOrderItems);
  */
 router.post('/', orderSaleCtrl.createOrder);
 
-/**
- * @swagger
- * /order-sales/{id}:
- *   put:
- *     summary: Atualiza o cabeçalho de um pedido de venda (não faturado)
- *     tags: [Order Sales]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema: { type: integer }
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/OrderSaleUpdateInput'
- *     responses:
- *       200:
- *         description: Pedido atualizado
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/OrderSale'
- *       400:
- *         description: Pedido já faturado ou dados inválidos
- *       404:
- *         description: Não encontrado
- */
-router.put('/:id', orderSaleCtrl.updateOrder);
 
 // ===================================================================
 // Schemas Swagger

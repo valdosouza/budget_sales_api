@@ -16,7 +16,7 @@ const controller = new InstitutionController(service);
  * @swagger
  * tags:
  *   name: Institutions
- *   description: Endpoints para gerenciar instituições/empresas
+ *   description: Endpoints para gerenciar instituições - Minha Empresa
  */
 
 /**

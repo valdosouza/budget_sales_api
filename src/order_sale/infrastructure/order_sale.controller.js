@@ -67,17 +67,4 @@ async function createOrder(req, res, next) {
   }
 }
 
-/**
- * PUT /api/v1/order-sales/:id
- * Atualiza o cabeçalho de um pedido de venda.
- */
-async function updateOrder(req, res, next) {
-  try {
-    const order = await orderSaleService.updateOrder(req.params.id, req.body);
-    res.json(order);
-  } catch (err) {
-    next(err);
-  }
-}
-
-module.exports = { listOrders, getOrder, listOrderItems, createOrder, updateOrder };
+module.exports = { listOrders, getOrder, listOrderItems, createOrder };
