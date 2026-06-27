@@ -149,8 +149,9 @@ app.use((err, _req, res, _next) => {
 // ----------------------------------------------------------------
 
 const server = app.listen(env.PORT, () => {
-  console.log(`[APP] local-gestao-api rodando em http://localhost:${env.PORT}`);
-  console.log(`[APP] Documentação Swagger: http://localhost:${env.PORT}/api-docs`);
+  const baseUrl = env.apiBaseUrl.replace(/\/api\/v1$/, '');
+  console.log(`[APP] local-gestao-api rodando em ${baseUrl}`);
+  console.log(`[APP] Documentação Swagger: ${baseUrl}/api-docs`);
   console.log(`[APP] Ambiente: ${env.NODE_ENV}`);
 });
 
