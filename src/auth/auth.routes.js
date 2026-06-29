@@ -18,6 +18,16 @@ const router = Router();
  *     summary: Autentica um usuario pelo login e senha
  *     tags: [Auth]
  *     security: []
+ *     description: |
+ *       Autentica um usuario e retorna um token JWT.
+ *
+ *       **IMPORTANTE:** A senha deve ser enviada **encriptada em MD5**.
+ *
+ *       Exemplo em JavaScript:
+ *       ```javascript
+ *       const crypto = require('crypto');
+ *       const senhaMD5 = crypto.createHash('md5').update('minhasenha').digest('hex');
+ *       ```
  *     requestBody:
  *       required: true
  *       content:
@@ -62,8 +72,8 @@ router.post('/login', ctrl.login);
  *           description: Login do usuario (USU_LOGIN)
  *         senha:
  *           type: string
- *           example: "minhasenha"
- *           description: Senha do usuario (USU_SENHA)
+ *           example: "5f4dcc3b5aa765d61d8327deb882cf99"
+ *           description: "Senha do usuario encriptada em MD5 (USU_SENHA). Exemplo: MD5('minhasenha') = '5f4dcc3b5aa765d61d8327deb882cf99'"
  *     LoginSuccess:
  *       type: object
  *       properties:
