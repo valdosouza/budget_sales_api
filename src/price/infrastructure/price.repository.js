@@ -72,6 +72,7 @@ class PriceRepository {
     const rows = await queryReadOnly(
       `SELECT
          D.PRC_CODPRO,
+         D.PRC_CODTPR,
          D.PRC_VL_VDA,
          MAX(S.SRC_TIME) AS SRC_TIME
        FROM TB_TABELA_PRECO M
@@ -80,14 +81,15 @@ class PriceRepository {
        WHERE S.SRC_TABELA = 'TB_PRECO'
          AND M.TPR_CODEMP = ?
          AND S.SRC_TIME > ?
-       GROUP BY D.PRC_CODPRO, D.PRC_VL_VDA
-       ORDER BY 3 ASC`,
+       GROUP BY D.PRC_CODPRO, D.PRC_CODTPR, D.PRC_VL_VDA
+       ORDER BY 4 ASC`,
       [Number(institutionId), lastSynch]
     );
     return rows.map((r) => ({
-      product:     r.PRC_CODPRO,
-      price_tag:   Number(r.PRC_VL_VDA),
-      last_change: r.SRC_TIME,
+      product:       r.PRC_CODPRO,
+      price_list_id: r.PRC_CODTPR,
+      price_tag:     Number(r.PRC_VL_VDA),
+      last_change:   r.SRC_TIME,
     }));
   }
 }

@@ -98,9 +98,10 @@ router.get('/', ctrl.listPrices);
  *                   items:
  *                     type: object
  *                     properties:
- *                       product:     { type: integer, example: 200 }
- *                       price_tag:   { type: number,  example: 99.90 }
- *                       last_change: { type: string,  format: date-time }
+ *                       product:       { type: integer, example: 200 }
+ *                       price_list_id: { type: integer, example: 1, description: "Codigo da tabela de preco (TPR_CODIGO)" }
+ *                       price_tag:     { type: number,  example: 99.90 }
+ *                       last_change:   { type: string,  format: date-time }
  *                 meta:
  *                   type: object
  *                   properties:
